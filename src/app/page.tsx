@@ -1,32 +1,39 @@
 "use client";
 
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
+import { About } from "./about";
+import { Capabilities } from "./capabilities";
+import { StackMarquee } from "./stack-marquee";
+import { ClosingCta } from "./closing-cta";
 import { Hero } from "./hero";
-import { NetworkCanvas } from "./network-canvas";
+import { Masthead, BrandMark } from "./masthead";
 import { PipelineScreen } from "./pipeline-screen";
-import styles from "./page.module.css";
+import { RealProblem } from "./real-problem";
+import { SiteFooter } from "./site-footer";
+import pageStyles from "./page.module.css";
+import styles from "./sections.module.css";
 
 function MacbookTitle() {
-  return (
-    <span className="font-[family-name:var(--font-display)] font-semibold tracking-[-0.01em]" style={{ color: "var(--text)" }}>
-      AI that fits your business, and stays inside it.
-    </span>
-  );
+  return <span>Every system runs inside your boundary.</span>;
 }
 
 function MacbookBadge() {
   return (
     <div
-      className="flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3"
-      style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+      className="flex items-center gap-2 rounded-full py-2 pl-2.5 pr-4"
+      style={{
+        background: "rgba(255,255,255,0.8)",
+        border: "1px solid var(--hairline)",
+        backdropFilter: "saturate(140%) blur(10px)",
+        WebkitBackdropFilter: "saturate(140%) blur(10px)",
+        boxShadow: "var(--shadow-sm), var(--lit)",
+      }}
     >
-      <div className="grid grid-cols-2 grid-rows-2 gap-[2px]" style={{ width: 16, height: 16 }}>
-        <span className="rounded-[2px]" style={{ background: "var(--violet)" }} />
-        <span className="rounded-[2px]" style={{ background: "var(--cyan)" }} />
-        <span className="rounded-[2px]" style={{ background: "var(--cyan)" }} />
-        <span className="rounded-[2px]" style={{ background: "var(--violet)" }} />
-      </div>
-      <span className="font-[family-name:var(--font-mono)] text-xs tracking-wide" style={{ color: "var(--text-dim)" }}>
+      <BrandMark className={pageStyles.brandMark} />
+      <span
+        className="text-xs font-medium"
+        style={{ color: "var(--ink)", letterSpacing: "-0.01em" }}
+      >
         modulariti
       </span>
     </div>
@@ -36,20 +43,29 @@ function MacbookBadge() {
 export default function Home() {
   return (
     <>
-      <NetworkCanvas />
-      <div className={`${styles.orb} ${styles.orbA}`} aria-hidden="true" />
-      <div className={`${styles.orb} ${styles.orbB}`} aria-hidden="true" />
+      <Masthead />
+      <main>
+        <Hero />
 
-      <Hero />
+        <section
+          className={styles.band}
+          aria-label="How modulariti runs inside your environment"
+        >
+          <MacbookScroll
+            screen={(progress) => <PipelineScreen progress={progress} />}
+            showGradient={false}
+            title={<MacbookTitle />}
+            badge={<MacbookBadge />}
+          />
+        </section>
 
-      <section className="relative z-[2]">
-        <MacbookScroll
-          screen={(progress) => <PipelineScreen progress={progress} />}
-          showGradient={false}
-          title={<MacbookTitle />}
-          badge={<MacbookBadge />}
-        />
-      </section>
+        <StackMarquee />
+        <Capabilities />
+        <RealProblem />
+        <About />
+        <ClosingCta />
+      </main>
+      <SiteFooter />
     </>
   );
 }

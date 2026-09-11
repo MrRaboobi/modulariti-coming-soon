@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import styles from "./page.module.css";
 
-const LAUNCH_TARGET = new Date("2026-09-11T00:00:00+05:00").getTime();
+const LAUNCH_TARGET = new Date("2026-10-01T00:00:00+05:00").getTime();
 
 type CountdownState =
   | { status: "pending" }
@@ -112,7 +112,7 @@ export function Countdown() {
         </Tile>
       </div>
       <p className={`${styles.launchDate} ${isLive ? styles.isLive : ""}`}>
-        {isLive ? "We're live — thank you for waiting." : "Launching September 11, 2026 · PKT"}
+        {isLive ? "We're live — thank you for waiting." : "Launching October 1, 2026 · PKT"}
       </p>
     </>
   );

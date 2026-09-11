@@ -1,0 +1,175 @@
+.band {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+}
+
+.shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  background: #0a0a0a;
+  padding: 44px 0 36px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* The glow bleeds in along the TOP edge only — a wide, shallow ellipse rather
+   than a centred orb, so it reads as light spilling over the lip of the bar. */
+.glow {
+  position: absolute;
+  top: -190px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130%;
+  height: 300px;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(86, 240, 160, 0.38) 0%,
+    rgba(52, 211, 153, 0.16) 42%,
+    rgba(16, 185, 129, 0) 72%
+  );
+  filter: blur(18px);
+}
+
+.heading {
+  position: relative;
+  margin: 0 0 32px;
+  padding: 0 32px;
+  text-align: center;
+  font-family: var(--stack-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* Edge masks so marks dissolve instead of hard-cutting. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 9%,
+    #000 91%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 9%,
+    #000 91%,
+    transparent 100%
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.set {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  margin: 0;
+  padding: 0 28px;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  color: #fff;
+  opacity: 0.7;
+  transition: opacity 0.22s var(--ease-out);
+}
+.item:hover {
+  opacity: 1;
+}
+
+.glyph {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.name {
+  font-family: var(--stack-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.ratings {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 28px;
+  margin-top: 36px;
+  padding: 24px 32px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.star {
+  display: grid;
+  place-items: center;
+  color: #34d399;
+}
+
+.ratingText {
+  font-family: var(--stack-sans);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+.ratingText strong {
+  font-weight: 600;
+  color: #fff;
+}
+.outOf {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 768px) {
+  .band {
+    padding: 0 20px 72px;
+  }
+  .shell {
+    border-radius: var(--r-lg);
+    padding: 34px 0 28px;
+  }
+  .heading {
+    margin-bottom: 26px;
+    padding: 0 20px;
+    font-size: 11.5px;
+  }
+  .set {
+    gap: 40px;
+  }
+  .name {
+    font-size: 14px;
+  }
+  .ratings {
+    margin-top: 28px;
+    padding-top: 20px;
+  }
+}

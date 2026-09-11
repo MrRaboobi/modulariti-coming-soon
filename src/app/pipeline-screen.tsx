@@ -4,20 +4,22 @@ import { useSyncExternalStore } from "react";
 import { MotionValue, motion, useTransform } from "motion/react";
 import { usePrefersReducedMotion } from "./use-reduced-motion";
 
-const VIOLET = "#a99dff";
-const CYAN = "#7dfae4";
-const TEXT = "#f2f0f9";
-const TEXT_DIM = "#9a97b3";
-const TEXT_FAINT = "#6a6782";
-const LINE = "#2c2942";
+const BLUE = "#2075ff";
+const BLUE_DEEP = "#0b47a8";
+const TEAL = "#07752f";
+const TEXT = "#051524";
+const TEXT_DIM = "#445062";
+const TEXT_FAINT = "#6b7280";
+const LINE = "#e5e9f0";
+const LINE_STRONG = "#cbd2dd";
 
 // Stage windows over the macbook section's scroll progress (0-1).
-const BOUNDARY: [number, number] = [0.14, 0.24];
-const BLOCK_BASE = 0.25;
+const BOUNDARY: [number, number] = [0.12, 0.22];
+const BLOCK_BASE = 0.24;
 const BLOCK_STEP = 0.03;
 const BLOCK_DUR = 0.07;
-const FLOW: [number, number] = [0.42, 0.56];
-const STATUS: [number, number] = [0.52, 0.6];
+const FLOW: [number, number] = [0.44, 0.64];
+const STATUS: [number, number] = [0.6, 0.7];
 
 type Block = { id: string; x: number; y: number; w: number; h: number; accent: string; label: string };
 
@@ -55,42 +57,42 @@ type Layout = {
 };
 
 const DESKTOP: Layout = {
-  chrome: { h: 56, dotR: 6, dotY: 28, dotXs: [28, 50, 72], titleSize: 13, titleY: 33 },
-  boundary: { x: 70, y: 100, w: 1460, h: 1010 },
-  boundaryLabel: { x: 102, y: 148, size: 14 },
-  lock: { x: 1478, y: 124, scale: 1 },
+  chrome: { h: 84, dotR: 11, dotY: 42, dotXs: [48, 84, 120], titleSize: 24, titleY: 50 },
+  boundary: { x: 80, y: 200, w: 1460, h: 890 },
+  boundaryLabel: { x: 116, y: 262, size: 26 },
+  lock: { x: 1432, y: 226, scale: 1.7 },
   blockStyle: {
-    accent: 14,
-    accentX: 20,
-    accentY: 20,
-    labelX: 44,
-    labelY: 32,
-    labelSize: 15,
-    barInset: 20,
-    barBottom: 34,
-    barH: 6,
+    accent: 24,
+    accentX: 32,
+    accentY: 30,
+    labelX: 74,
+    labelY: 52,
+    labelSize: 28,
+    barInset: 32,
+    barBottom: 48,
+    barH: 10,
   },
   blocks: [
-    { id: "doc", x: 150, y: 470, w: 280, h: 120, accent: VIOLET, label: "Document Extraction" },
-    { id: "rag", x: 620, y: 330, w: 220, h: 110, accent: CYAN, label: "RAG" },
-    { id: "vec", x: 620, y: 560, w: 220, h: 110, accent: VIOLET, label: "Vector DB" },
-    { id: "grd", x: 1050, y: 440, w: 260, h: 120, accent: CYAN, label: "Guardrails" },
+    { id: "doc", x: 210, y: 520, w: 420, h: 150, accent: BLUE, label: "Document Extraction" },
+    { id: "rag", x: 700, y: 350, w: 330, h: 140, accent: BLUE_DEEP, label: "RAG" },
+    { id: "vec", x: 700, y: 620, w: 330, h: 140, accent: BLUE, label: "Vector DB" },
+    { id: "grd", x: 1100, y: 480, w: 330, h: 150, accent: BLUE_DEEP, label: "Guardrails" },
   ],
   connectors: [
-    "M430,530 C520,530 520,385 620,385",
-    "M430,530 C520,530 520,615 620,615",
-    "M840,385 C940,385 940,500 1050,500",
-    "M840,615 C940,615 940,500 1050,500",
+    "M630,595 C665,595 665,420 700,420",
+    "M630,595 C665,595 665,690 700,690",
+    "M1030,420 C1065,420 1065,555 1100,555",
+    "M1030,690 C1065,690 1065,555 1100,555",
   ],
-  input: { x: 96, y: 503, scale: 1 },
-  output: { x: 1350, y: 458, scale: 1 },
+  input: { x: 112, y: 552, scale: 1.6 },
+  output: { x: 1448, y: 522, scale: 1.3 },
   dot: {
-    r: 9,
+    r: 14,
     t: [0, 0.21, 0.43, 0.71, 1],
-    x: [130, 430, 620, 1050, 1370],
-    y: [530, 530, 385, 500, 500],
+    x: [185, 630, 700, 1100, 1470],
+    y: [595, 595, 420, 555, 555],
   },
-  status: { x: 102, y: 1046, dotR: 6, titleX: 26, titleY: 13, titleSize: 15, subY: 34, subSize: 12 },
+  status: { x: 116, y: 968, dotR: 11, titleX: 46, titleY: 24, titleSize: 28, subY: 62, subSize: 22 },
 };
 
 // Phones paint this SVG about 366px wide, so desktop type would land near 3px.
@@ -112,10 +114,10 @@ const MOBILE: Layout = {
     barH: 12,
   },
   blocks: [
-    { id: "doc", x: 420, y: 246, w: 760, h: 140, accent: VIOLET, label: "Document Extraction" },
-    { id: "rag", x: 420, y: 436, w: 760, h: 140, accent: CYAN, label: "RAG" },
-    { id: "vec", x: 420, y: 626, w: 760, h: 140, accent: VIOLET, label: "Vector DB" },
-    { id: "grd", x: 420, y: 816, w: 760, h: 140, accent: CYAN, label: "Guardrails" },
+    { id: "doc", x: 420, y: 246, w: 760, h: 140, accent: BLUE, label: "Document Extraction" },
+    { id: "rag", x: 420, y: 436, w: 760, h: 140, accent: BLUE_DEEP, label: "RAG" },
+    { id: "vec", x: 420, y: 626, w: 760, h: 140, accent: BLUE, label: "Vector DB" },
+    { id: "grd", x: 420, y: 816, w: 760, h: 140, accent: BLUE_DEEP, label: "Guardrails" },
   ],
   connectors: ["M800,386 L800,436", "M800,576 L800,626", "M800,766 L800,816"],
   input: { x: 168, y: 260, scale: 2.1 },
@@ -167,7 +169,14 @@ function BlockNode({
   return (
     <g transform={`translate(${block.x},${block.y})`}>
       <motion.g style={{ opacity: t, y, scale }}>
-        <rect width={block.w} height={block.h} rx="16" fill="#171528" stroke={LINE} />
+        <rect
+          width={block.w}
+          height={block.h}
+          rx="14"
+          fill="#ffffff"
+          stroke={LINE}
+          filter="url(#pipeline-card-shadow)"
+        />
         <rect
           x={style.accentX}
           y={style.accentY}
@@ -179,7 +188,7 @@ function BlockNode({
         <text
           x={style.labelX}
           y={style.labelY}
-          fontFamily="var(--font-mono)"
+          fontFamily="var(--stack-sans)"
           fontSize={style.labelSize}
           fill={TEXT}
           fontWeight={500}
@@ -192,7 +201,7 @@ function BlockNode({
           width={barW}
           height={style.barH}
           rx={style.barH / 2}
-          fill="#241f38"
+          fill="#eef2f7"
         />
         <rect
           x={style.barInset}
@@ -225,8 +234,8 @@ function Connector({
     <motion.path
       d={path}
       fill="none"
-      stroke={CYAN}
-      strokeOpacity="0.45"
+      stroke={BLUE}
+      strokeOpacity="0.55"
       strokeWidth={width}
       style={{ pathLength }}
     />
@@ -244,7 +253,7 @@ function DocIcon() {
 
 function AnswerIcon() {
   return (
-    <g stroke={CYAN} strokeWidth="2" fill="none" strokeLinejoin="round">
+    <g stroke={BLUE} strokeWidth="2" fill="none" strokeLinejoin="round">
       <path
         d="M2 4h50a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H24l-12 12V40H2a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Z"
         transform="translate(2,0)"
@@ -294,26 +303,29 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <radialGradient id="pipeline-bg" cx="30%" cy="10%" r="90%">
-          <stop offset="0%" stopColor="#171331" />
-          <stop offset="55%" stopColor="#0e0d1a" />
-          <stop offset="100%" stopColor="#0a0a12" />
+        <radialGradient id="pipeline-bg" cx="30%" cy="6%" r="92%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="60%" stopColor="#fbfcfe" />
+          <stop offset="100%" stopColor="#f3f6fa" />
         </radialGradient>
+        <filter id="pipeline-card-shadow" x="-20%" y="-20%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#051524" floodOpacity="0.12" />
+        </filter>
       </defs>
 
       <rect width="1600" height="1200" fill="url(#pipeline-bg)" />
 
       {/* top chrome */}
-      <rect width="1600" height={chrome.h} fill="#100e1c" />
-      <rect y={chrome.h - 1} width="1600" height="1" fill="#211f33" />
+      <rect width="1600" height={chrome.h} fill="#f7f9fc" />
+      <rect y={chrome.h - 1} width="1600" height="1" fill={LINE} />
       {chrome.dotXs.map((cx) => (
-        <circle key={cx} cx={cx} cy={chrome.dotY} r={chrome.dotR} fill="#332f4a" />
+        <circle key={cx} cx={cx} cy={chrome.dotY} r={chrome.dotR} fill={LINE_STRONG} />
       ))}
       <text
         x="800"
         y={chrome.titleY}
         textAnchor="middle"
-        fontFamily="var(--font-mono)"
+        fontFamily="var(--stack-sans)"
         fontSize={chrome.titleSize}
         letterSpacing={chrome.titleSize * 0.12}
         fill={TEXT_FAINT}
@@ -330,7 +342,7 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
           height={boundary.h}
           rx="28"
           fill="none"
-          stroke="#3a3560"
+          stroke={LINE_STRONG}
           strokeWidth="2"
           strokeDasharray="3 10"
           strokeLinecap="round"
@@ -338,7 +350,7 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
         <text
           x={boundaryLabel.x}
           y={boundaryLabel.y}
-          fontFamily="var(--font-mono)"
+          fontFamily="var(--stack-sans)"
           fontSize={boundaryLabel.size}
           letterSpacing={boundaryLabel.size * 0.14}
           fill={TEXT_FAINT}
@@ -358,9 +370,9 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
             height={boundary.h}
             rx="28"
             fill="none"
-            stroke={CYAN}
+            stroke={BLUE}
             strokeWidth="3"
-            strokeOpacity="0.4"
+            strokeOpacity="0.45"
             style={{ opacity: flowT }}
             className="pipeline-contain-pulse"
           />
@@ -393,7 +405,7 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
 
       {/* traveling data packet */}
       {!reducedMotion && (
-        <motion.circle r={dot.r} fill={CYAN} style={{ opacity: dotOpacity, cx: dotCx, cy: dotCy }} />
+        <motion.circle r={dot.r} fill={BLUE} style={{ opacity: dotOpacity, cx: dotCx, cy: dotCy }} />
       )}
 
       {/* status */}
@@ -403,13 +415,13 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
             cx={status.dotR}
             cy={status.dotR}
             r={status.dotR}
-            fill="#34e0c4"
+            fill={TEAL}
             className={reducedMotion ? undefined : "pipeline-status-blink"}
           />
           <text
             x={status.titleX}
             y={status.titleY + status.dotR}
-            fontFamily="var(--font-mono)"
+            fontFamily="var(--stack-sans)"
             fontSize={status.titleSize}
             fontWeight={600}
             fill={TEXT}
@@ -419,7 +431,7 @@ export function PipelineScreen({ progress }: { progress: MotionValue<number> }) 
           <text
             x={status.titleX}
             y={status.subY + status.dotR}
-            fontFamily="var(--font-mono)"
+            fontFamily="var(--stack-mono)"
             fontSize={status.subSize}
             fill={TEXT_FAINT}
           >

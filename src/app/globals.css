@@ -1,27 +1,64 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
-  --bg: #0a0a12;
-  --surface: #15131f;
-  --surface-2: #1b192a;
-  --border: #29263b;
-  --border-soft: #201e2f;
-  --text: #f2f0f9;
-  --text-dim: #9a97b3;
-  --text-faint: #6a6782;
-  --violet: #7c6cf5;
-  --violet-soft: #a99dff;
-  --cyan: #34e0c4;
-  --cyan-soft: #7dfae4;
-  --violet-dim: rgba(124, 108, 245, 0.32);
-  --cyan-dim: rgba(52, 224, 196, 0.28);
-  --shadow: rgba(6, 5, 14, 0.55);
+  /* ---- Ground. Calibrated against the reference: white canvas, cool paper
+     surfaces, hairlines doing the structural work. ---- */
+  --canvas: #ffffff;
+  --surface: #f7f9fc;
+  --surface-2: #eef2f7;
+  --surface-3: #e4eaf2;
 
-  --font-display: var(--font-display);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  /* ---- Structure ---- */
+  --hairline: #e5e9f0;
+  --line: #cbd2dd;
+  --line-strong: #a9b3c2;
+
+  /* ---- Ink ---- */
+  --ink: #051524;
+  --body: #445062;
+  --muted: #6b7280;
+
+  /* ---- Action. #2075FF is the reference primary; the deeper tone carries
+     white text at 5.2:1 where the brighter one only reaches 4.2:1. ---- */
+  --blue: #2075ff;
+  --blue-deep: #1a66e0;
+  --blue-tint: #e9f2ff;
+  --blue-tint-2: #dbeaff;
+
+  /* ---- Data semantics ---- */
+  --up: #07752f;
+  --up-soft: #e3f5e9;
+  --warn: #8a5a00;
+  --warn-soft: #fdf1dc;
+  --down: #c0271d;
+  --down-soft: #fdeceb;
+
+  /* ---- Elevation: broad ambient blur over a tight contact shadow. ---- */
+  --lit: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --lit-strong: inset 0 1px 0 rgba(255, 255, 255, 1);
+  --shadow-sm: 0 1px 2px rgba(5, 21, 36, 0.05), 0 2px 8px rgba(5, 21, 36, 0.05);
+  --shadow: 0 2px 8px rgba(5, 21, 36, 0.06), 0 8px 32px rgba(5, 21, 36, 0.1);
+  --shadow-lg: 0 2px 8px rgba(5, 21, 36, 0.06), 0 24px 64px rgba(5, 21, 36, 0.14);
+  --shadow-blue: 0 2px 8px rgba(32, 117, 255, 0.22), 0 12px 32px rgba(32, 117, 255, 0.26);
+
+  /* ---- Geometry ---- */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Resting colour for scroll-resolved copy — 4.8:1 on white on its own. */
+  --resting: #9aa3b2;
+
+  --stack-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --stack-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --stack-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 * {
@@ -33,54 +70,131 @@ body {
   height: 100%;
 }
 
-body {
-  margin: 0;
-  background:
-    radial-gradient(120% 90% at 18% -10%, #171331 0%, transparent 55%),
-    radial-gradient(110% 80% at 88% 108%, #0f1f22 0%, transparent 50%),
-    var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--line) var(--surface);
 }
-
-::selection {
-  background: var(--violet-dim);
-  color: var(--text);
-}
-
-:focus-visible {
-  outline: 2px solid var(--cyan-soft);
-  outline-offset: 2px;
-}
-
-.pipeline-contain-pulse {
-  stroke-dasharray: 6 18;
-  animation: pipeline-contain-pulse 4s linear infinite;
-}
-@keyframes pipeline-contain-pulse {
-  to {
-    stroke-dashoffset: -240;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
-.pipeline-status-blink {
-  animation: pipeline-status-blink 1.8s ease-in-out infinite;
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--body);
+  font-family: var(--stack-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
-@keyframes pipeline-status-blink {
+
+/* The display face runs semi-condensed — the typographic signature. */
+h1,
+h2,
+h3 {
+  font-family: var(--stack-display);
+  font-variation-settings: "wdth" 88;
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--blue-tint-2);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue-deep);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+a {
+  color: var(--blue-deep);
+  text-underline-offset: 3px;
+}
+
+input {
+  caret-color: var(--blue);
+}
+
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--surface);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border: 3px solid var(--surface);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--line-strong);
+  }
+}
+
+.tnum {
+  font-family: var(--stack-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.livedot {
+  animation: live 2.4s var(--ease-in-out) infinite;
+}
+@keyframes live {
   0%,
   100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.35;
+    opacity: 0.3;
+  }
+}
+
+/* Seamless marquee: the track holds two identical logo sets, so translating
+   exactly -50% lands the copy where the original started. */
+.marquee-track {
+  animation: marquee 46s linear infinite;
+}
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.marquee-wrap:hover .marquee-track,
+.marquee-wrap:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* The load-in is the only animation that runs above the fold, so it is the
+   only one that can flash: the server HTML paints before hydration, and GSAP
+   cannot hide anything until it runs. Holding these at opacity 0 in CSS closes
+   that window — `useIntro()` uses fromTo() so it plays back to 1 from here.
+   Gated twice, so the content is never hidden from anyone who will not get the
+   animation: reduced-motion skips it, and so does a browser with no scripting
+   (older engines that do not know `scripting` fail the query and show it too). */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  [data-intro] {
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pipeline-contain-pulse,
-  .pipeline-status-blink {
+  .livedot,
+  .marquee-track {
     animation: none !important;
+  }
+  .sh-word {
+    color: var(--ink) !important;
   }
 }

@@ -45,9 +45,12 @@ export const MacbookScroll = ({
   badge?: React.ReactNode;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  // "end end" ends the range exactly where the sticky stage unpins. With the
+  // stock "end start" the last ~45% of progress ran while the stage was already
+  // scrolling away, so the story's final beats played over the next section.
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
 
   const viewportWidth = useSyncExternalStore(
@@ -65,30 +68,33 @@ export const MacbookScroll = ({
 
   const scaleX = useTransform(
     scrollYProgress,
-    [0, 0.3],
+    [0, 0.28],
     [1.2, isMobile ? 1 : 1.5],
   );
   const scaleY = useTransform(
     scrollYProgress,
-    [0, 0.3],
+    [0, 0.28],
     [0.6, isMobile ? 1 : 1.5],
   );
-  const translate = useTransform(scrollYProgress, [0, 0.64, 1], [0, 0, 380]);
-  const rotate = useTransform(scrollYProgress, [0.1, 0.12, 0.3], [-28, -28, 0]);
-  const textTransform = useTransform(scrollYProgress, [0, 0.3], [0, 100]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  // The lid used to slide 380px down at the end of the range. Because the
+  // sticky stage is exactly one viewport tall, that pushed the open screen
+  // past its own box and painted it over the section below. The rig now
+  // opens and holds; the section's own scroll carries it away.
+  const rotate = useTransform(scrollYProgress, [0.08, 0.1, 0.28], [-28, -28, 0]);
+  const textTransform = useTransform(scrollYProgress, [0, 0.28], [0, 90]);
 
   return (
-    <div ref={ref} data-macbook-scroll-root className="relative min-h-[260vh]">
-      {/* `clip` rather than `hidden`: hidden would make this a scroll
-          container and break the sticky positioning it sits on. */}
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-x-clip">
+    <div ref={ref} data-macbook-scroll-root className="relative min-h-[210vh]">
+      {/* `clip` rather than `hidden`: hidden would make this a scroll container
+          and break the sticky positioning. Clipping BOTH axes is what keeps the
+          open lid inside its own viewport instead of over the next section. */}
+      <div
+        className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-clip"
+        style={{ background: "var(--surface)" }}
+      >
         <motion.h2
-          style={{
-            translateY: textTransform,
-            opacity: textOpacity,
-          }}
-          className="mb-10 max-w-[88vw] text-center text-xl font-bold text-balance text-neutral-800 md:mb-16 md:max-w-3xl md:text-3xl dark:text-white"
+          style={{ translateY: textTransform, color: "var(--ink)" }}
+          className="mb-10 max-w-[88vw] text-center text-xl font-semibold tracking-[-0.03em] text-balance md:mb-14 md:max-w-3xl md:text-4xl"
         >
           {title || (
             <span>
@@ -107,13 +113,12 @@ export const MacbookScroll = ({
             scaleX={scaleX}
             scaleY={scaleY}
             rotate={rotate}
-            translate={translate}
           />
           {/* Base area */}
-          <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
+          <div className="relative -z-10 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gradient-to-b from-[#e8ebef] to-[#cdd3db]">
             {/* above keyboard bar */}
             <div className="relative h-10 w-full">
-              <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
+              <div className="absolute inset-x-0 mx-auto h-4 w-[80%] rounded-b-sm bg-[#15171b]" />
             </div>
             <div className="relative flex">
               <div className="mx-auto h-full w-[10%] overflow-hidden">
@@ -127,9 +132,9 @@ export const MacbookScroll = ({
               </div>
             </div>
             <Trackpad />
-            <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
+            <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#b9c0c9] to-[#8e97a3]" />
             {showGradient && (
-              <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-black dark:via-black"></div>
+              <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-[var(--canvas)] via-[var(--canvas)] to-transparent"></div>
             )}
             {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
           </div>
@@ -143,36 +148,36 @@ export const Lid = ({
   scaleX,
   scaleY,
   rotate,
-  translate,
   src,
   screen,
 }: {
   scaleX: MotionValue<number>;
   scaleY: MotionValue<number>;
   rotate: MotionValue<number>;
-  translate: MotionValue<number>;
   src?: string;
   screen?: React.ReactNode;
 }) => {
   return (
     <div className="relative [perspective:800px]">
-      <div
-        style={{
-          transform: "perspective(800px) rotateX(-25deg) translateZ(0px)",
-          transformOrigin: "bottom",
-          transformStyle: "preserve-3d",
-        }}
-        className="relative h-[12rem] w-[32rem] rounded-2xl bg-[#010101] p-2"
-      >
+      <div className="h-[12rem] w-[32rem] overflow-clip rounded-2xl">
         <div
           style={{
-            boxShadow: "0px 2px 0px 2px #171717 inset",
+            transform: "perspective(800px) rotateX(-25deg) translateZ(0px)",
+            transformOrigin: "bottom",
+            transformStyle: "preserve-3d",
           }}
-          className="absolute inset-0 flex items-center justify-center rounded-lg bg-[#010101]"
+          className="relative h-full w-full rounded-2xl bg-[#1d1f24] p-2"
         >
-          <span className="text-white">
-            <ModuleMarkLogo />
-          </span>
+          <div
+            style={{
+              boxShadow: "0px 2px 0px 2px #2a2d34 inset",
+            }}
+            className="absolute inset-0 flex items-center justify-center rounded-lg bg-[#15171b]"
+          >
+            <span className="text-white">
+              <ModuleMarkLogo />
+            </span>
+          </div>
         </div>
       </div>
       <motion.div
@@ -180,15 +185,14 @@ export const Lid = ({
           scaleX: scaleX,
           scaleY: scaleY,
           rotateX: rotate,
-          translateY: translate,
           transformStyle: "preserve-3d",
           transformOrigin: "top",
         }}
-        className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
+        className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#1d1f24] p-2"
       >
-        <div className="absolute inset-0 rounded-lg bg-[#272729]" />
+        <div className="absolute inset-2 rounded-lg bg-white" />
         {screen ? (
-          <div className="absolute inset-0 overflow-hidden rounded-lg">{screen}</div>
+          <div className="absolute inset-2 overflow-hidden rounded-lg">{screen}</div>
         ) : (
           src && (
             <Image
@@ -208,9 +212,9 @@ export const Lid = ({
 export const Trackpad = () => {
   return (
     <div
-      className="mx-auto my-1 h-32 w-[40%] rounded-xl"
+      className="mx-auto my-1 h-32 w-[40%] rounded-xl bg-[#dfe3e9]"
       style={{
-        boxShadow: "0px 0px 1px 1px #00000020 inset",
+        boxShadow: "0px 0px 1px 1px #00000018 inset, 0px 1px 2px 0px #ffffff90",
       }}
     ></div>
   );
@@ -589,7 +593,7 @@ export const KBtn = ({
     <div
       className={cn(
         "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
-        backlit && "bg-white/[0.2] shadow-xl shadow-white",
+        backlit && "bg-white/[0.14] shadow-sm shadow-black/20",
       )}
     >
       <div
@@ -622,7 +626,7 @@ export const SpeakerGrid = () => {
       className="mt-2 flex h-40 gap-[2px] px-[0.5px]"
       style={{
         backgroundImage:
-          "radial-gradient(circle, #08080A 0.5px, transparent 0.5px)",
+          "radial-gradient(circle, #aab2bd 0.5px, transparent 0.5px)",
         backgroundSize: "3px 3px",
       }}
     ></div>
@@ -666,10 +670,10 @@ export const OptionKey = ({ className }: { className: string }) => {
 const ModuleMarkLogo = () => {
   return (
     <div className="grid h-3 w-3 grid-cols-2 grid-rows-2 gap-[1.5px]">
-      <span className="rounded-[1px]" style={{ background: "#a99dff" }} />
-      <span className="rounded-[1px]" style={{ background: "#34e0c4" }} />
-      <span className="rounded-[1px]" style={{ background: "#34e0c4" }} />
-      <span className="rounded-[1px]" style={{ background: "#a99dff" }} />
+      <span className="rounded-[1px]" style={{ background: "#e9ecf2" }} />
+      <span className="rounded-[1px]" style={{ background: "#98a1b2" }} />
+      <span className="rounded-[1px]" style={{ background: "#6b7488" }} />
+      <span className="rounded-[1px]" style={{ background: "#2bd07a" }} />
     </div>
   );
 };

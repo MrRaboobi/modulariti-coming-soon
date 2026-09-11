@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useRef, useState } from "react";
+import { useHoverLift } from "./gsap-primitives";
 import styles from "./page.module.css";
 
 type Status = "idle" | "success";
 
-export function SignupForm() {
+export function SignupForm({ fieldId = "email", label = "Get notified at launch" }: { fieldId?: string; label?: string } = {}) {
+  const scope = useRef<HTMLFormElement>(null);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+
+  // Re-runs when the form swaps to its success state and the button unmounts.
+  useHoverLift(scope, `.${styles.signupButton}`, {
+    y: 0,
+    hoverScale: 1.04,
+    press: 0.96,
+    deps: [status],
+  });
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,7 +36,7 @@ export function SignupForm() {
   }
 
   return (
-    <form className={styles.signup} onSubmit={handleSubmit}>
+    <form ref={scope} className={styles.signup} onSubmit={handleSubmit}>
       {status === "success" ? (
         <p className={styles.signupSuccess}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,13 +47,13 @@ export function SignupForm() {
         </p>
       ) : (
         <>
-          <label className={styles.signupLabel} htmlFor="email">
-            Get notified at launch
+          <label className={styles.signupLabel} htmlFor={fieldId}>
+            {label}
           </label>
           <div className={styles.signupRow}>
             <input
               type="email"
-              id="email"
+              id={fieldId}
               name="email"
               placeholder="you@company.com"
               required
@@ -52,16 +61,11 @@ export function SignupForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <motion.button
-              type="submit"
-              className={styles.signupButton}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 22 }}
-            >
+            <button type="submit" className={styles.signupButton}>
               <span>Notify Me</span>
-            </motion.button>
+            </button>
           </div>
+          <p className={styles.signupNote}>One email when we launch. No newsletter, no sharing.</p>
         </>
       )}
     </form>
