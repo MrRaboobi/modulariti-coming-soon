@@ -74,16 +74,16 @@ export const MacbookScroll = ({
   // for the whole first third of the scroll, where 1.2 is still in force.
   const maxPaintedWidth = 512 * Math.max(1.2, isMobile ? 1 : 1.5);
 
-  // Height has to be fitted too. The open lid paints h-96 (384px) times the
-  // same scale, but only occupies h-[12rem] in the layout flow, so the rest of
-  // it overhangs upward — on top of the base's 22rem. Fitting width alone left
-  // the rig taller than its own h-screen stage: the lid climbed over the
-  // heading and overflow-clip amputated the base.
-  const maxPaintedHeight = isMobile ? 384 + 352 : 384 * 1.5 + 352;
-  // Room kept clear above the rig for the heading and its margin. The heading
-  // is a single line plus mb-14, so this is close to what it actually needs —
-  // anything more and the rig is scaled down further than the stage requires.
-  const headingAllowance = 112;
+  // Height has to be fitted too, but the rig is shorter than it looks. The
+  // screen is absolutely positioned with transformOrigin "top", so scaleY
+  // grows it DOWNWARD over the base rather than overhanging upward: the
+  // painted stack is whichever is taller, the 12rem lid plus the 22rem base,
+  // or the 24rem screen at full scale. An earlier version added those two
+  // together and shrank the rig by nearly 40% for headroom it never needed.
+  const maxPaintedHeight = Math.max(192 + 352, 384 * (isMobile ? 1 : 1.5));
+  // Room kept clear above the rig for the heading, its margin, and the 90px
+  // the heading itself travels down as the lid opens.
+  const headingAllowance = isMobile ? 168 : 208;
 
   const fitScale = Math.min(
     1,
@@ -119,7 +119,7 @@ export const MacbookScroll = ({
       >
         <motion.h2
           style={{ translateY: textTransform, color: "var(--ink)" }}
-          className="mb-10 max-w-[88vw] text-center text-xl font-semibold tracking-[-0.03em] text-balance md:mb-14 md:max-w-3xl md:text-4xl"
+          className="mb-28 max-w-[88vw] text-center text-xl font-semibold tracking-[-0.03em] text-balance md:mb-32 md:max-w-3xl md:text-4xl"
         >
           {title || (
             <span>
