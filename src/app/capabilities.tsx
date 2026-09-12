@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { CapabilityTabs } from "./capability-tabs";
 import { useReveal } from "./gsap-primitives";
+import { ScrollHighlight } from "./scroll-highlight";
 import styles from "./sections.module.css";
 
 export function Capabilities() {
@@ -15,10 +16,14 @@ export function Capabilities() {
         <h2 className={styles.h2} data-reveal>
           Four places we attach to the business
         </h2>
-        <p className={styles.sectionIntro} data-reveal>
-          Every engagement starts by naming the line it is supposed to move. These are the four
-          attachment points, and what each one actually ships.
-        </p>
+        {/* Outside the reveal stagger on purpose: it owns its own scrubbed
+            trigger, the same way the lead paragraphs in About do. `to` holds
+            it at the colour the stylesheet already gives it. */}
+        <ScrollHighlight
+          className={styles.sectionIntro}
+          to="var(--body)"
+          text="Every engagement starts by naming the line it is supposed to move. These are the four attachment points, and what each one actually ships."
+        />
         <div data-reveal>
           <CapabilityTabs />
         </div>

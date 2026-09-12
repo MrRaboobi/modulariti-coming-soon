@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import { gsap } from "@/lib/gsap";
 import { useMotion } from "./gsap-primitives";
 
@@ -66,7 +66,11 @@ export function ScrollHighlight({
   );
 
   return (
-    <p ref={ref} className={className}>
+    // The reduced-motion rule in globals.css pins every word to this value.
+    // Publishing it here rather than hardcoding one colour there is what lets
+    // a caller that resolves to something other than --ink still land on its
+    // own end state when the animation never runs.
+    <p ref={ref} className={className} style={{ "--sh-to": to } as CSSProperties}>
       {text.split(" ").map((word, i) => (
         <span key={`${word}-${i}`} className="sh-word">
           {word}{" "}

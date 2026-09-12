@@ -313,12 +313,13 @@
   transform: translateX(-50%);
   z-index: 0;
   pointer-events: none;
-  /* Held well back: the field is a texture the copy sits on, not a picture
-     competing with it. The canvas paints its own white ground, so what the
-     mask fades out to is the same paper underneath. */
-  opacity: 0.8;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 96%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 96%);
+  /* Full weight: the field ramps itself horizontally so the copy column stays
+     clear (see ParticleField's `falloff`), which holds contrast where there is
+     room for it instead of greying the whole mesh down. The mask only has to
+     dissolve it before the ledger panel. */
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 26%, transparent 72%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 26%, transparent 72%);
 }
 
 .heroStage > .heroGrid {

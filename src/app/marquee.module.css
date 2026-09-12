@@ -8,7 +8,9 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--r-xl);
-  background: #0a0a0a;
+  background-color: #0a0a0a;
+  background-image: var(--matte-ink);
+  background-size: var(--matte-size);
   padding: 44px 0 36px;
   box-shadow: var(--shadow-lg);
 }

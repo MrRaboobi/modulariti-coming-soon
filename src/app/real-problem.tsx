@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { CircleAnnotation } from "./circle-annotation";
 import { ScrollHighlight } from "./scroll-highlight";
 import { useReveal } from "./gsap-primitives";
 import styles from "./sections.module.css";
@@ -36,7 +37,11 @@ export function RealProblem() {
               The Real Problem
             </h2>
             <p className={styles.problemDeck} data-reveal>
-              Why <span className={styles.stat}>88%</span> of AI projects never reach production
+              Why{" "}
+              <CircleAnnotation>
+                <span className={styles.stat}>88%</span>
+              </CircleAnnotation>{" "}
+              of AI projects never reach production
             </p>
             <ScrollHighlight
               className={styles.problemBody}

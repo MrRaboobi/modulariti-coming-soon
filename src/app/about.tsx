@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { ScrollHighlight } from "./scroll-highlight";
-import { useReveal } from "./gsap-primitives";
+import { useParallax, useReveal } from "./gsap-primitives";
 import styles from "./sections.module.css";
 
 const STAGES = [
@@ -24,10 +24,18 @@ const NOTS = ["Not an AI vendor", "Not a staffing supplier", "Not advice for som
 
 export function About() {
   const scope = useRef<HTMLElement>(null);
+  const statement = useRef<HTMLDivElement>(null);
+  const statementText = useRef<HTMLParagraphElement>(null);
+
   useReveal(scope, { y: 14, duration: 0.6, stagger: 0.07, start: "top 88%" });
 
+  // The one obsidian block on a white page is where depth is cheapest to read:
+  // drifting the line against its own panel separates the two planes without
+  // moving anything the eye is tracking. Scrubbed, transform only, small.
+  useParallax(statementText, statement, { distance: 14 });
+
   return (
-    <div className={styles.band}>
+    <div className={`${styles.band} ${styles.bandTint}`}>
       <section ref={scope} id="about" className={styles.section}>
         {/* 1 — hero composition: title across, then the claim against the account */}
         <h2 className={styles.aboutTitle} data-reveal>
@@ -76,8 +84,8 @@ export function About() {
         </ol>
 
         {/* 4 — closing statement */}
-        <div className={styles.statement} data-reveal>
-          <p className={styles.statementText}>
+        <div ref={statement} className={styles.statement} data-reveal>
+          <p ref={statementText} className={styles.statementText}>
             We take responsibility for the outcome, and hand over a system your own team can run
             without us.
           </p>

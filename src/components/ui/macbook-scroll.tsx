@@ -58,13 +58,38 @@ export const MacbookScroll = ({
     () => window.innerWidth,
     () => 1280,
   );
+  const viewportHeight = useSyncExternalStore(
+    subscribeToViewport,
+    () => window.innerHeight,
+    () => 800,
+  );
   const isMobile = viewportWidth < 768;
 
   // The lid grows to 1.5x on desktop, so the widest painted state is 32rem
   // (512px) times that. Fit the whole rig to the viewport instead of using
   // fixed breakpoint scales, which left it unreadably small on phones.
-  const maxPaintedWidth = isMobile ? 512 : 768;
-  const fitScale = Math.min(1, (viewportWidth - 24) / maxPaintedWidth);
+  // scaleX OPENS at 1.2 and lands at 1 on mobile / 1.5 on desktop, so the
+  // widest the lid ever paints is 32rem times whichever of those is larger.
+  // Taking only the landing value clipped the lid against both phone edges
+  // for the whole first third of the scroll, where 1.2 is still in force.
+  const maxPaintedWidth = 512 * Math.max(1.2, isMobile ? 1 : 1.5);
+
+  // Height has to be fitted too. The open lid paints h-96 (384px) times the
+  // same scale, but only occupies h-[12rem] in the layout flow, so the rest of
+  // it overhangs upward — on top of the base's 22rem. Fitting width alone left
+  // the rig taller than its own h-screen stage: the lid climbed over the
+  // heading and overflow-clip amputated the base.
+  const maxPaintedHeight = isMobile ? 384 + 352 : 384 * 1.5 + 352;
+  // Room kept clear above the rig for the heading and its margin. The heading
+  // is a single line plus mb-14, so this is close to what it actually needs —
+  // anything more and the rig is scaled down further than the stage requires.
+  const headingAllowance = 112;
+
+  const fitScale = Math.min(
+    1,
+    (viewportWidth - 24) / maxPaintedWidth,
+    (viewportHeight - headingAllowance) / maxPaintedHeight,
+  );
 
   const scaleX = useTransform(
     scrollYProgress,

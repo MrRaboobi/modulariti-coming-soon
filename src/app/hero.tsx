@@ -1,10 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import {
-  OrbitalHeroSection,
-  SOLAR_SYSTEM_LIGHT,
-} from "@/components/ui/orbital-hero-section";
+import { ParticleField } from "@/components/ui/aether-flow-hero";
 import { Countdown } from "./countdown";
 import { SignupForm } from "./signup-form";
 import { RevenueLedger } from "./revenue-ledger";
@@ -18,17 +15,12 @@ const RAIL = [
   { label: "Bytes leaving your network", value: 0, decimals: 0, suffix: "", up: true },
 ];
 
-/* Mercury through Saturn. The ice giants are dropped rather than drawn: after
-   the radial squeeze they sit almost on top of Saturn, and each one costs a
-   few hundred stroke calls a frame for a coil nobody can pick out. */
-const BODIES = SOLAR_SYSTEM_LIGHT.slice(0, 6);
-
 export function Hero() {
   const scope = useRef<HTMLElement>(null);
-  // Below 980px the grid stacks: the copy takes the full measure, so there is
-  // no empty quadrant left to put the field in — it would run straight through
-  // the headline. It is also the per-frame stroke loop phones can least afford,
-  // so it is not rendered at all rather than rendered and hidden.
+  // Below 980px the grid stacks and the copy takes the full measure, so the
+  // field runs behind live text rather than beside it. It stays — an even mesh
+  // reads as texture where the orbital field's bright focus did not — but it
+  // is thinned out and held further back. See .heroSky in page.module.css.
   const wide = useMediaQuery("(min-width: 981px)");
 
   // One timeline over the five `data-intro` blocks below, in DOM order:
@@ -38,32 +30,23 @@ export function Hero() {
   return (
     <section ref={scope} className={styles.hero}>
       <div className={styles.heroStage}>
-        {wide ? (
-          <div className={styles.heroSky} aria-hidden="true">
-            <OrbitalHeroSection
-              theme="light"
-              planets={BODIES}
-              // The Sun sits high and right — clear of the headline on the left
-              // and above the stat rail below it — and the scrim veils the left
-              // edge, which is the column the copy actually runs down.
-              focus={[0.81, 0.15]}
-              scrim="left"
-              scrimStrength={0.82}
-              viewRadius={3.9}
-              lead={0.08}
-              glow={0.85}
-              // Slower than the component's default: this runs under live copy,
-              // so it has to read as drift rather than as something happening.
-              yearSeconds={26}
-              trailYears={2.2}
-              maxTurns={2.2}
-              starCount={520}
-              // The canvas sits behind the copy and takes no pointer events of
-              // its own, so the camera reads the pointer off the whole hero.
-              pointerTarget={scope}
-            />
-          </div>
-        ) : null}
+        <div className={styles.heroSky} aria-hidden="true">
+          <ParticleField
+            density={wide ? 4200 : 9000}
+            linkRadius={wide ? 138 : 104}
+            speed={0.3}
+            pointerRadius={wide ? 220 : 150}
+            // Quiet over the copy column on the left, full weight in the open
+            // right-hand half. On a stacked phone layout there is no clear
+            // column, so the ramp runs top-heavy instead via a lower ceiling.
+            falloff={wide ? [0.1, 0.56] : [0, 0.3]}
+            falloffMin={wide ? 0.16 : 0.3}
+            opacity={wide ? 1 : 0.62}
+            // The canvas sits behind the copy and takes no pointer events of
+            // its own, so it reads the pointer off the whole hero instead.
+            pointerTarget={scope}
+          />
+        </div>
 
         <div className={styles.heroGrid}>
           <div>

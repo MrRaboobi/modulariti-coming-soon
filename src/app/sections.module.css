@@ -5,8 +5,49 @@
   width: 100%;
   border-top: 1px solid var(--hairline);
 }
+
 .bandPanel {
-  background: linear-gradient(180deg, var(--surface), var(--canvas) 60%);
+  background-color: var(--canvas);
+  background-image: var(--matte-fine), var(--matte-broad),
+    linear-gradient(180deg, var(--surface), var(--canvas) 60%);
+  background-size: 140px 140px, 800px 800px, auto;
+}
+
+/* The sheets alternate in value so consecutive planes separate. Three levels
+   off white — enough for the eye to register a step, not enough to read as a
+   colour. Same token bandPanel already resolves to. */
+/* The ink anchor at the foot of the page. `.bandInk` was referenced by
+   site-footer.tsx but never defined, so the footer had been rendering
+   class="band undefined" on paper — while .socials a:hover still carried a
+   white 3% overlay, which only reads on a dark ground. That hover is the
+   evidence this band was always meant to be ink. On-dark values are the ones
+   the statement block already uses; nothing new is introduced. */
+.bandInk {
+  background-color: #0a0a0a;
+  background-image: var(--matte-ink);
+  background-size: var(--matte-size);
+  /* The paper hairline would otherwise sit as a light line on top of the ink. */
+  border-top-color: rgba(255, 255, 255, 0.14);
+}
+.bandInk .footBrand {
+  color: #fff;
+}
+.bandInk .socials a {
+  color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.bandInk .socials a:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.bandInk .finePrint {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.bandTint {
+  background-color: var(--surface);
+  background-image: var(--matte);
+  background-size: var(--matte-size);
 }
 
 .section {
@@ -292,7 +333,9 @@
   padding: 64px 60px;
   border: none;
   border-radius: var(--r-xl);
-  background: #0a0a0a;
+  background-color: #0a0a0a;
+  background-image: var(--matte-ink);
+  background-size: var(--matte-size);
   box-shadow: var(--shadow-lg);
 }
 .statementText {
@@ -367,15 +410,49 @@
 
 /* ---------- Footer ---------- */
 
+/* Same measure and gutter as .mastheadInner, so the brand mark sits on the
+   same left edge at the top and bottom of the page.
+
+   A grid, not space-between: with three items of unequal width, space-between
+   centres the middle one BETWEEN its neighbours rather than on the page — and
+   the copyright line is far wider than the wordmark, so the socials were
+   pushed left of true centre. Equal 1fr outer tracks put them on the page
+   axis while the brand and copyright stay pinned to the gutters. */
 .siteFooter {
   max-width: 1240px;
   margin: 0 auto;
   padding: 40px 32px 48px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
-  flex-wrap: wrap;
+}
+.siteFooter .socials {
+  justify-self: center;
+}
+.siteFooter .finePrint {
+  justify-self: end;
+}
+
+/* Stacked and centred where three tracks no longer fit. The gutter drops to
+   20px to stay level with .mastheadInner, which narrows at 768px — the band
+   edges have to agree at the top and bottom of the page. */
+@media (max-width: 768px) {
+  .siteFooter {
+    padding-inline: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .siteFooter {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .siteFooter .finePrint {
+    justify-self: center;
+  }
 }
 .footBrand {
   display: flex;
